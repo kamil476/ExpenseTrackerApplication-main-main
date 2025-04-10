@@ -8,42 +8,18 @@
 import UIKit
 
 class BudgetHistoryController: UIViewController {
-
+    
     private let viewModel = BudgetHistoryViewModel()
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let bottomSheetContainer = UIView()
-    private var filterButton: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "filterIcon"), for: .normal)
-        btn.layer.cornerRadius = 10
-        btn.layer.shadowColor = UIColor.black.cgColor
-        btn.layer.shadowOpacity = 0.2
-        btn.layer.shadowOffset = CGSize(width: 1, height: 1)
-        btn.layer.shadowRadius = 10
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(openFilterBottomSheet), for: .touchUpInside)
-        return btn
-    }()
-    private var refreshButton: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "refreshIcon"), for: .normal)
-        btn.layer.cornerRadius = 10
-        btn.layer.shadowColor = UIColor.black.cgColor
-        btn.layer.shadowOpacity = 0.2
-        btn.layer.shadowOffset = CGSize(width: 1, height: 1)
-        btn.layer.shadowRadius = 10
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(refreshButtonAction), for: .touchUpInside)
-        return btn
-    }()
+    private let filterButton = CustomButton(imageName: "filterIcon",target: self, action: #selector(openFilterBottomSheet))
+    private let refreshButton = CustomButton(imageName: "refreshIcon",target: self, action: #selector(refreshButtonAction))
     private let filterOptions = ["Income", "Expense"]
     private let sortOptions = ["Highest", "Lowest", "Newest", "Oldest"]
     private var selectedFilterButton: UIButton?
     private var selectedSortButton: UIButton?
     private let filterStack = UIStackView()
     private let sortStack = UIStackView()
-
-    // UI Components as variables
     private let titleLabel: UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont.boldSystemFont(ofSize: 18)
@@ -54,14 +30,7 @@ class BudgetHistoryController: UIViewController {
         lbl.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return lbl
     }()
-    private let resetButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Reset", for: .normal)
-        btn.setTitleColor(UIColor(hex: "7F3DFF"), for: .normal)
-        btn.contentHorizontalAlignment = .right
-        btn.addTarget(self, action: #selector(resetTapped), for: .touchUpInside)
-        return btn
-    }()
+    private let resetButton = CustomButton(title: "Reset", titleColor: UIColor(hex: "7F3DFF"),target: self, action: #selector(resetTapped))
     private let applyButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Apply", for: .normal)
@@ -72,7 +41,7 @@ class BudgetHistoryController: UIViewController {
         btn.addTarget(self, action: #selector(applyTapped), for: .touchUpInside)
         return btn
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -80,43 +49,39 @@ class BudgetHistoryController: UIViewController {
         setupFilter()
         bindViewModel()
     }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchData()
         dismissBottomSheet()
     }
-
+    
     private func fetchData() {
         viewModel.fetchData {
             self.tableView.reloadData()
         }
     }
-
     private func bindViewModel() {
         // Bind view model properties to UI updates
         viewModel.fetchData {
             self.tableView.reloadData()
         }
     }
-
     private func setupFilter() {
         view.addSubview(filterButton)
         view.addSubview(refreshButton)
-
+        
         NSLayoutConstraint.activate([
             filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             filterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             filterButton.heightAnchor.constraint(equalToConstant: 40),
             filterButton.widthAnchor.constraint(equalToConstant: 40),
-
+            
             refreshButton.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor, constant: -10),
             refreshButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 67),
             refreshButton.heightAnchor.constraint(equalToConstant: 26),
             refreshButton.widthAnchor.constraint(equalToConstant: 26),
         ])
     }
-
     private func setupTableView() {
         tableView.register(DashboardExpenseListTableView.self, forCellReuseIdentifier: "DashboardExpenseListTableView")
         tableView.register(DashboardIncomeListTableview.self, forCellReuseIdentifier: "DashboardIncomeListTableview")
@@ -124,7 +89,7 @@ class BudgetHistoryController: UIViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -133,7 +98,6 @@ class BudgetHistoryController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
-
     private func setupBottomSheet() {
         // Bottom sheet container
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dismissBottomSheet))
@@ -144,8 +108,8 @@ class BudgetHistoryController: UIViewController {
         bottomSheetContainer.clipsToBounds = true
         bottomSheetContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bottomSheetContainer)
-
         let height: CGFloat = 300
+        
         NSLayoutConstraint.activate([
             bottomSheetContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomSheetContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -156,21 +120,18 @@ class BudgetHistoryController: UIViewController {
         bottomSheetContainer.transform = CGAffineTransform(translationX: 0, y: height)
         setupBottomSheetContent()
     }
-
+    
     private func setupBottomSheetContent() {
         bottomSheetContainer.subviews.forEach { $0.removeFromSuperview() }
         filterStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         sortStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
         let resetBtn = resetButton
         sectionTitleLabel.text = "Filter By"
         configureStackView(filterStack, with: filterOptions, action: #selector(filterTapped(_:)))
-
         sectionTitleLabel.text = "Sort By"
         configureStackView(sortStack, with: sortOptions, action: #selector(sortTapped(_:)))
-
         let applyBtn = applyButton
-
+        
         let mainStack = UIStackView(arrangedSubviews: [
             titleLabel,
             resetBtn,
@@ -184,15 +145,14 @@ class BudgetHistoryController: UIViewController {
         mainStack.spacing = 16
         mainStack.translatesAutoresizingMaskIntoConstraints = false
         bottomSheetContainer.addSubview(mainStack)
-
+        
         NSLayoutConstraint.activate([
-            mainStack.topAnchor.constraint(equalTo: bottomSheetContainer.topAnchor, constant: 20),
+            mainStack.topAnchor.constraint(equalTo: bottomSheetContainer.topAnchor, constant: 10),
             mainStack.leadingAnchor.constraint(equalTo: bottomSheetContainer.leadingAnchor, constant: 20),
             mainStack.trailingAnchor.constraint(equalTo: bottomSheetContainer.trailingAnchor, constant: -20),
             mainStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomSheetContainer.bottomAnchor, constant: -20)
         ])
     }
-
     private func select(button: UIButton, in stack: UIStackView) {
         for case let btn as UIButton in stack.arrangedSubviews {
             btn.backgroundColor = .white
@@ -201,7 +161,6 @@ class BudgetHistoryController: UIViewController {
         button.backgroundColor = UIColor.systemPurple.withAlphaComponent(0.2)
         button.setTitleColor(UIColor(hex: "7F3DFF"), for: .normal)
     }
-
     private func configureStackView(_ stack: UIStackView, with items: [String], action: Selector) {
         stack.axis = .horizontal
         stack.spacing = 8
@@ -217,7 +176,6 @@ class BudgetHistoryController: UIViewController {
             stack.addArrangedSubview(btn)
         }
     }
-
     @objc private func resetTapped() {
         for case let btn as UIButton in filterStack.arrangedSubviews {
             btn.backgroundColor = .white
@@ -230,7 +188,6 @@ class BudgetHistoryController: UIViewController {
         viewModel.selectedFilter = nil
         viewModel.selectedSort = nil
     }
-
     @objc private func applyTapped() {
         viewModel.applyFilterAndSort {
             DispatchQueue.main.async {
@@ -271,15 +228,12 @@ extension BudgetHistoryController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         return viewModel.dataByDate.count
     }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.dataByDate[section].entries.count
     }
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return viewModel.dataByDate[section].date
     }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let entry = viewModel.dataByDate[indexPath.section].entries[indexPath.row]
         
@@ -292,6 +246,6 @@ extension BudgetHistoryController: UITableViewDataSource, UITableViewDelegate {
             cell.configure(with: income)
             return cell
         }
-        return UITableViewCell() // default cell if each of them didnt match
+        return UITableViewCell()
     }
 }

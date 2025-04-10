@@ -12,8 +12,6 @@
 		E82F83C22D896FCB00C17354 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E82F83C02D896FCB00C17354 /* DataModel.xcdatamodeld */; };
 		E82F83D62D8A97C100C17354 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83D52D8A97C100C17354 /* CoreDataManager.swift */; };
 		E82F83D92D8AAC1600C17354 /* TimeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83D82D8AAC1600C17354 /* TimeCollectionViewCell.swift */; };
-		E82F83DE2D91252A00C17354 /* AddIncomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83DD2D91252A00C17354 /* AddIncomeViewModel.swift */; };
-		E82F83E02D91343D00C17354 /* AddIncomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83DF2D91343D00C17354 /* AddIncomeModel.swift */; };
 		E82F83E82D928C9400C17354 /* DashboardExpenseListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83E72D928C9400C17354 /* DashboardExpenseListTableView.swift */; };
 		E82F83EB2D95247500C17354 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83EA2D95247500C17354 /* DateExtension.swift */; };
 		E82F83ED2D95265C00C17354 /* CategoryTypeStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82F83EC2D95265C00C17354 /* CategoryTypeStructure.swift */; };
@@ -35,6 +33,8 @@
 		E8DC7B892D82AAC400C9FFEF /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DC7B882D82AAC400C9FFEF /* ColorExtension.swift */; };
 		E8DC7B8C2D82B2FF00C9FFEF /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DC7B8B2D82B2FF00C9FFEF /* DashboardViewController.swift */; };
 		E8DC7B8F2D82BCAD00C9FFEF /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DC7B8E2D82BCAD00C9FFEF /* CustomTabBarController.swift */; };
+		E8E6FA4D2DA7B34400F77C62 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6FA4C2DA7B34400F77C62 /* CustomView.swift */; };
+		E8E6FA4F2DA7D29C00F77C62 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6FA4E2DA7D29C00F77C62 /* CustomButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +60,6 @@
 		E82F83C12D896FCB00C17354 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		E82F83D52D8A97C100C17354 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		E82F83D82D8AAC1600C17354 /* TimeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeCollectionViewCell.swift; sourceTree = "<group>"; };
-		E82F83DD2D91252A00C17354 /* AddIncomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddIncomeViewModel.swift; sourceTree = "<group>"; };
-		E82F83DF2D91343D00C17354 /* AddIncomeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddIncomeModel.swift; sourceTree = "<group>"; };
 		E82F83E72D928C9400C17354 /* DashboardExpenseListTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardExpenseListTableView.swift; sourceTree = "<group>"; };
 		E82F83EA2D95247500C17354 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		E82F83EC2D95265C00C17354 /* CategoryTypeStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTypeStructure.swift; sourceTree = "<group>"; };
@@ -87,6 +85,8 @@
 		E8DC7B882D82AAC400C9FFEF /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E8DC7B8B2D82B2FF00C9FFEF /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		E8DC7B8E2D82BCAD00C9FFEF /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
+		E8E6FA4C2DA7B34400F77C62 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
+		E8E6FA4E2DA7D29C00F77C62 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,22 +153,6 @@
 				E8DC7B852D82A55700C9FFEF /* AddIncomeViewController.swift */,
 			);
 			name = View;
-			sourceTree = "<group>";
-		};
-		E82F83DB2D9124C100C17354 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				E82F83DD2D91252A00C17354 /* AddIncomeViewModel.swift */,
-			);
-			name = ViewModel;
-			sourceTree = "<group>";
-		};
-		E82F83DC2D9124D100C17354 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				E82F83DF2D91343D00C17354 /* AddIncomeModel.swift */,
-			);
-			name = Model;
 			sourceTree = "<group>";
 		};
 		E82F83E62D928B6A00C17354 /* ExpenseTableViewCell */ = {
@@ -325,6 +309,8 @@
 			children = (
 				E8DC7B7C2D7EC1A000C9FFEF /* CustomLabel.swift */,
 				E8DC7B822D800D4F00C9FFEF /* CustomImageView.swift */,
+				E8E6FA4C2DA7B34400F77C62 /* CustomView.swift */,
+				E8E6FA4E2DA7D29C00F77C62 /* CustomButton.swift */,
 			);
 			path = CustomFiles;
 			sourceTree = "<group>";
@@ -341,9 +327,7 @@
 		E8DC7B842D819E9100C9FFEF /* AddIncome */ = {
 			isa = PBXGroup;
 			children = (
-				E82F83DC2D9124D100C17354 /* Model */,
 				E82F83DA2D9124B300C17354 /* View */,
-				E82F83DB2D9124C100C17354 /* ViewModel */,
 				E82F83FD2D9E6D6800C17354 /* IncomeArrayList */,
 			);
 			name = AddIncome;
@@ -516,14 +500,13 @@
 			files = (
 				E8DC7B4C2D7AC67700C9FFEF /* AddExpenseViewController.swift in Sources */,
 				E82F83EB2D95247500C17354 /* DateExtension.swift in Sources */,
-				E82F83DE2D91252A00C17354 /* AddIncomeViewModel.swift in Sources */,
 				E8DC7B8C2D82B2FF00C9FFEF /* DashboardViewController.swift in Sources */,
-				E82F83E02D91343D00C17354 /* AddIncomeModel.swift in Sources */,
 				E8DC7B8F2D82BCAD00C9FFEF /* CustomTabBarController.swift in Sources */,
 				E82F83E82D928C9400C17354 /* DashboardExpenseListTableView.swift in Sources */,
 				E82F83FC2D969F0100C17354 /* DashboardModel.swift in Sources */,
 				E82F83FF2D9E6D9700C17354 /* IncomeItemArrayList.swift in Sources */,
 				E82F84022D9E759900C17354 /* DashboardIncomeListTableview.swift in Sources */,
+				E8E6FA4D2DA7B34400F77C62 /* CustomView.swift in Sources */,
 				E82F83ED2D95265C00C17354 /* CategoryTypeStructure.swift in Sources */,
 				E8DC7B482D7AC67700C9FFEF /* AppDelegate.swift in Sources */,
 				E8DC7B832D800D4F00C9FFEF /* CustomImageView.swift in Sources */,
@@ -535,6 +518,7 @@
 				E82F83C22D896FCB00C17354 /* DataModel.xcdatamodeld in Sources */,
 				E82F83D92D8AAC1600C17354 /* TimeCollectionViewCell.swift in Sources */,
 				E82F83F32D96755C00C17354 /* AlertPopups.swift in Sources */,
+				E8E6FA4F2DA7D29C00F77C62 /* CustomButton.swift in Sources */,
 				E8DC7B862D82A55700C9FFEF /* AddIncomeViewController.swift in Sources */,
 				18F5AEEF2DA4D94C00E47C9B /* BudgetHistoryViewModel.swift in Sources */,
 				E8DC7B4A2D7AC67700C9FFEF /* SceneDelegate.swift in Sources */,

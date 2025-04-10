@@ -4,42 +4,14 @@
 //
 //  Created by Kamil Kakar on 07/03/2025.
 
-
 import UIKit
-import AVFoundation
 
 class AddExpenseViewController: UIViewController {
     
     // MARK: - UI COMPONENTS
-    private var fieldsView: UIView = {
-        let bottomview = UIView()
-        bottomview.backgroundColor = .white
-        bottomview.layer.cornerRadius = 30
-        bottomview.layer.shadowColor = UIColor.black.cgColor
-        bottomview.layer.shadowOpacity = 0.2
-        bottomview.layer.shadowOffset = CGSize(width: 0, height: -3)
-        bottomview.layer.shadowRadius = 5
-        bottomview.translatesAutoresizingMaskIntoConstraints = false
-        return bottomview
-    }()
-    private var categoryFieldView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 14
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray5.cgColor
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private var descriptionFieldView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 14
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray5.cgColor
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private let fieldsView = CustomView(cornerRadius: 30, backgroundColor: .white, shadowColor: .black, shadowOpacity: 0.2, shadowOffset: CGSize(width: 0, height: -3), shadowRadius: 5)
+    private let categoryFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
+    private let descriptionFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
     private var descriptiontextField: UITextField = {
         let txt = UITextField()
         txt.placeholder = "Enter description"
@@ -59,45 +31,11 @@ class AddExpenseViewController: UIViewController {
         txt.translatesAutoresizingMaskIntoConstraints = false
         return txt
     }()
-    private var walletFieldView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 14
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray5.cgColor
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private var attachmentFieldView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 14
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemGray5.cgColor
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private var categoryLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Select Category"
-        label.textColor = .darkGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    private var walletLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Select Wallet"
-        label.textColor = .darkGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    private var attachmentLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Add Attachment"
-        label.textColor = .darkGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let walletFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor:  .systemGray5)
+    private let attachmentFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
+    private var categoryLabel = CustomLabel(text: "Select Category", textColor: .darkGray, font: .systemFont(ofSize: 15))
+    private var walletLabel = CustomLabel(text: "Select Wallet", textColor: .darkGray, font: .systemFont(ofSize: 15))
+    private var attachmentLabel = CustomLabel(text: "Add Attachment", textColor: .darkGray, font: .systemFont(ofSize: 17))
     private var categoryDropdown: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = true
@@ -118,51 +56,10 @@ class AddExpenseViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    private var continueButton: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("Continue", for: .normal)
-        btn.backgroundColor = UIColor(hex: "7F3DFF")
-        btn.setTitleColor(.white, for: .normal)
-        btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        btn.layer.cornerRadius = 25
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(continueButtonTapped), for: .touchUpInside)
-        return btn
-    }()
-    private var leftArrowButton: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "arrowLeft"), for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.addTarget(self, action: #selector(backToDashboard), for: .touchUpInside)
-        return btn
-    }()
-    private var cancelButton: UIButton = {
-        let closeButton = UIButton()
-        closeButton.setTitle("Close", for: .normal)
-        closeButton.addTarget(AddExpenseViewController.self, action: #selector (closeBottomSheet), for: .touchUpInside)
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-        return closeButton
-    }()
-    private var crossButtonForImage: UIButton = {
-        let btn = UIButton()
-        btn.setImage(UIImage(named: "historyUser"), for: .normal)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        print("target to crossButtonForImage")
-        btn.addTarget(AddExpenseViewController.self, action: #selector(removeAttachment), for: .touchUpInside)
-        btn.isHidden = true
-        return btn
-    }()
-    private var bottomSheetView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 20
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.3
-        view.layer.shadowOffset = CGSize(width: 0, height: -3)
-        view.layer.shadowRadius = 5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private let continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
+    private let leftArrowButton = CustomButton(imageName: "arrowLeft",target: self, action: #selector(backToDashboard))
+    private let cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
+    private let bottomSheetView = CustomView(cornerRadius: 20,backgroundColor: .white,shadowColor: .black,shadowOpacity: 0.3,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
     let attachmentImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -177,7 +74,6 @@ class AddExpenseViewController: UIViewController {
     private let titleLabel = CustomLabel(text: "Expense", textColor: .white, font: UIFont.systemFont(ofSize: 20, weight: .bold))
     private let askAmount = CustomLabel(text: "How much?", textColor: .systemGray5, font: UIFont.systemFont(ofSize: 16, weight: .semibold))
     private let currencyLabel = CustomLabel(text: "Rs.", textColor: .white, font: UIFont.systemFont(ofSize: 35, weight: .semibold))
-    var budgetType: BudgetType = .food
     
     // MARK: - LIFECYCLE
     override func viewDidLoad() {
@@ -186,7 +82,9 @@ class AddExpenseViewController: UIViewController {
         setupView()
         setupDropdowns()
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        //        resetFields()
+    }
     // MARK: - FUNCTIONS
     private func setupView(){
         view.addSubview(fieldsView)
@@ -210,7 +108,6 @@ class AddExpenseViewController: UIViewController {
         attachmentFieldView.addSubview(attachmentLabel)
         attachmentFieldView.addSubview(attachmentPin)
         fieldsView.addSubview(attachmentImageView)
-        attachmentImageView.addSubview(crossButtonForImage)
         descriptionFieldView.addSubview(descriptiontextField)
         
         let tapCategory = UITapGestureRecognizer(target: self, action: #selector(showCategoryDropdown))
@@ -309,10 +206,6 @@ class AddExpenseViewController: UIViewController {
             attachmentImageView.widthAnchor.constraint(equalToConstant: 100),
             attachmentImageView.heightAnchor.constraint(equalToConstant: 100),
             
-            crossButtonForImage.topAnchor.constraint(equalTo: attachmentImageView.topAnchor, constant: 2),
-            crossButtonForImage.trailingAnchor.constraint(equalTo: attachmentImageView.trailingAnchor, constant: -1),
-            crossButtonForImage.widthAnchor.constraint(equalToConstant: 22),
-            crossButtonForImage.heightAnchor.constraint(equalToConstant: 22),
         ])
     }
     private func setupDropdowns() {
@@ -342,6 +235,23 @@ class AddExpenseViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "hh:mm a"
         return formatter.string(from: Date())
+    }
+    private func resetFields() {
+        descriptiontextField.text = ""
+        amountSpent.text = "0"
+        // Reset category label
+        categoryLabel.text = "Select Category"
+        categoryLabel.textColor = .darkGray
+        // Reset wallet label
+        walletLabel.text = "Select Wallet"
+        walletLabel.textColor = .darkGray
+        // Reset attachment
+        attachmentLabel.text = "Add Attachment"
+        attachmentLabel.textColor = .darkGray
+        attachmentImageView.image = nil
+        // Hide dropdowns if they were open
+        categoryDropdown.isHidden = true
+        walletDropdown.isHidden = true
     }
     
     // MARK: - ACTIONS/EVENT LISTENERS
@@ -404,12 +314,6 @@ class AddExpenseViewController: UIViewController {
         openImagePicker(sourceType: .photoLibrary)
         closeBottomSheet()
     }
-    @objc private func removeAttachment() {
-        print("Removing attachment")
-        attachmentImageView.image = nil
-        crossButtonForImage.isHidden = true
-        attachmentFieldView.isHidden = false
-    }
     @objc private func closeBottomSheet() {
         UIView.animate(withDuration: 0.3, animations: {
             self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: 300)
@@ -452,7 +356,6 @@ extension AddExpenseViewController: UIImagePickerControllerDelegate, UINavigatio
         } else if let selectedImage = info[.originalImage] as? UIImage {
             attachmentImageView.image = selectedImage
         }
-        crossButtonForImage.isHidden = false
         attachmentFieldView.isHidden = true
         print("Attachment selected")
         picker.dismiss(animated: true)

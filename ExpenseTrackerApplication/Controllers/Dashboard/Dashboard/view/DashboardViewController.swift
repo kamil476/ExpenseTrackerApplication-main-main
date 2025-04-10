@@ -12,49 +12,14 @@ class DashboardViewController: UIViewController {
     var viewModel = DashboardViewModel()
     
     // MARK: - UI Components
-    private let incomeView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "00A86B")
-        view.layer.cornerRadius = 30
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: -3)
-        view.layer.shadowRadius = 5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private let expenseView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "FD3C4A")
-        view.layer.cornerRadius = 30
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: -3)
-        view.layer.shadowRadius = 5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private let incomeIconView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 18
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private let incomeView = CustomView(cornerRadius: 30,backgroundColor: UIColor(hex: "00A86B"),shadowColor: .black,shadowOpacity: 0.2,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
+    private let expenseView = CustomView(cornerRadius: 30,backgroundColor: UIColor(hex: "FD3C4A"),shadowColor: .black,shadowOpacity: 0.2,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
+    private let incomeIconView = CustomView(cornerRadius: 18,backgroundColor: .white)
     private let accountBalanceLabel = CustomLabel(text: "Account Balance", textColor: .systemGray2, font: UIFont.systemFont(ofSize: 18, weight: .semibold))
-    private let expenceIconView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 18
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private let incomeAmount = CustomLabel(text: "0", textColor: .white, font: UIFont.systemFont(ofSize: 16, weight: .regular)
-    )
-    private let accountBalanceAmount = CustomLabel(text: "Rs 0", textColor: .black, font: UIFont.systemFont(ofSize: 35, weight: .bold)
-    )
-    private let expenseAmount = CustomLabel(text: "0", textColor: .white, font: UIFont.systemFont(ofSize: 16, weight: .regular)
-    )
+    private let expenceIconView = CustomView(cornerRadius: 18,backgroundColor: .white)
+    private let incomeAmount = CustomLabel(text: "0", textColor: .white, font: UIFont.systemFont(ofSize: 16, weight: .regular))
+    private let accountBalanceAmount = CustomLabel(text: "Rs 0", textColor: .black, font: UIFont.systemFont(ofSize: 35, weight: .bold))
+    private let expenseAmount = CustomLabel(text: "0", textColor: .white, font: UIFont.systemFont(ofSize: 16, weight: .regular))
     private let incomeLabel = CustomLabel(text: "Income", textColor: .white, font: UIFont.systemFont(ofSize: 18, weight: .semibold))
     private let expenseLabel = CustomLabel(text: "Expense", textColor: .white, font: UIFont.systemFont(ofSize: 18, weight: .semibold))
     private let incomeImage = CustomImageView(imageName: "IncomeIcon")
@@ -191,7 +156,7 @@ class DashboardViewController: UIViewController {
     }
     private func loadExpenses() {
         let selectedOption = options[selectedIndex]
-        viewModel.loadData(for: selectedOption)
+        viewModel.loadDataFiltered(for: selectedOption)
         updateUI()
     }
     private func updateUI() {
@@ -217,7 +182,7 @@ extension DashboardViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIndex = indexPath.item
         let selectedOption = options[selectedIndex]
-        viewModel.loadData(for: selectedOption)
+        viewModel.loadDataFiltered(for: selectedOption)
         updateUI()
         collectionView.reloadData()
     }
