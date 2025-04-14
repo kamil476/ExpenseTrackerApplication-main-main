@@ -30,7 +30,7 @@ class DashboardViewController: UIViewController {
     private let notificationImage = CustomImageView(imageName: "notifiactionIcon")
     private var collectionView: UICollectionView!
     private let options = ["Today", "Week", "Month", "Year"]
-    private var showExpenses = false
+    private let showExpenses = false
     private var selectedIndex = 0
     
     // MARK: - Lifecycle

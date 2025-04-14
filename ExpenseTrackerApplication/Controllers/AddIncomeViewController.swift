@@ -6,13 +6,13 @@
 
 import UIKit
 
-class AddIncomeViewController: UIViewController {
+class AddIncomeViewController: BaseController {
     
     // MARK: - UI COMPONENTS
     private let fieldsView = CustomView(cornerRadius: 30, backgroundColor: .white, shadowColor: .black, shadowOpacity: 0.2, shadowOffset: CGSize(width: 0, height: -3), shadowRadius: 5)
     private let categoryFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
     private let descriptionFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
-    private var descriptiontextField: UITextField = {
+    private let descriptiontextField: UITextField = {
         let txt = UITextField()
         txt.placeholder = "Enter description"
         txt.font = UIFont.systemFont(ofSize: 16)
@@ -21,7 +21,7 @@ class AddIncomeViewController: UIViewController {
         txt.translatesAutoresizingMaskIntoConstraints = false
         return txt
     }()
-    private var amountSpent: UITextField = {
+    private let amountSpent: UITextField = {
         let txt = UITextField()
         txt.font = UIFont.boldSystemFont(ofSize: 40)
         txt.textColor = .white
@@ -33,10 +33,10 @@ class AddIncomeViewController: UIViewController {
     }()
     private let walletFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor:  .systemGray5)
     private let attachmentFieldView = CustomView(cornerRadius: 14, backgroundColor: .clear, borderWidth: 1, borderColor: .systemGray5)
-    private var categoryLabel = CustomLabel(text: "Select Category", textColor: .darkGray, font: .systemFont(ofSize: 15))
-    private var walletLabel = CustomLabel(text: "Select Wallet", textColor: .darkGray, font: .systemFont(ofSize: 15))
-    private var attachmentLabel = CustomLabel(text: "Add Attachment", textColor: .darkGray, font: .systemFont(ofSize: 17))
-    private var categoryDropdown: UITableView = {
+    private let categoryLabel = CustomLabel(text: "Select Category", textColor: .darkGray, font: .systemFont(ofSize: 15))
+    private let walletLabel = CustomLabel(text: "Select Wallet", textColor: .darkGray, font: .systemFont(ofSize: 15))
+    private let attachmentLabel = CustomLabel(text: "Add Attachment", textColor: .darkGray, font: .systemFont(ofSize: 17))
+    private let categoryDropdown: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = true
         tableView.layer.backgroundColor = .none
@@ -46,7 +46,7 @@ class AddIncomeViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    private var walletDropdown: UITableView = {
+    private let walletDropdown: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = true
         tableView.layer.backgroundColor = .none
@@ -58,7 +58,6 @@ class AddIncomeViewController: UIViewController {
     }()
     private let continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
     private let cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
-    private let bottomSheetView = CustomView(cornerRadius: 20,backgroundColor: .white,shadowColor: .black,shadowOpacity: 0.3,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
     let attachmentImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -68,9 +67,9 @@ class AddIncomeViewController: UIViewController {
     private let dropDownArrow = CustomImageView(imageName: "arrowDropDown")
     private let attachmentPin = CustomImageView(imageName: "attachmentPin")
     private let dropDownArrowWallet = CustomImageView(imageName: "arrowDropDown")
-    private let categoryOptions = ["Food", "Transport", "Shopping", "Entertainment", "Donations", "Bills", "Repairs", "Fuel"]
+    private let categoryOptions = ["Salary"]
     private let walletOptions = ["EasyPaisa"]
-    private let titleLabel = CustomLabel(text: "Expense", textColor: .white, font: UIFont.systemFont(ofSize: 20, weight: .bold))
+    private let titleLabel = CustomLabel(text: "Income", textColor: .white, font: UIFont.systemFont(ofSize: 20, weight: .bold))
     private let askAmount = CustomLabel(text: "How much?", textColor: .systemGray5, font: UIFont.systemFont(ofSize: 16, weight: .semibold))
     private let currencyLabel = CustomLabel(text: "Rs.", textColor: .white, font: UIFont.systemFont(ofSize: 35, weight: .semibold))
     
@@ -108,7 +107,7 @@ class AddIncomeViewController: UIViewController {
         attachmentFieldView.addSubview(attachmentPin)
         fieldsView.addSubview(attachmentImageView)
         descriptionFieldView.addSubview(descriptiontextField)
-        
+
         let tapCategory = UITapGestureRecognizer(target: self, action: #selector(showCategoryDropdown))
         categoryFieldView.addGestureRecognizer(tapCategory)
         
@@ -210,92 +209,37 @@ class AddIncomeViewController: UIViewController {
         walletDropdown.delegate = self
         walletDropdown.dataSource = self
     }
-    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = sourceType
-        imagePicker.delegate = self
-        imagePicker.allowsEditing = true
-        present(imagePicker, animated: true)
-    }
-    private func createButton(title: String, action: Selector) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(hex: "7F3DFF")
-        button.layer.cornerRadius = 8
-        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        button.addTarget(self, action: action, for: .touchUpInside)
-        return button
-    }
     private func resetFields() {
         descriptiontextField.text = ""
         amountSpent.text = "0"
-        
         // Reset category label
         categoryLabel.text = "Select Category"
         categoryLabel.textColor = .darkGray
-        
         // Reset wallet label
         walletLabel.text = "Select Wallet"
         walletLabel.textColor = .darkGray
-        
         // Reset attachment
         attachmentLabel.text = "Add Attachment"
         attachmentLabel.textColor = .darkGray
         attachmentImageView.image = nil
-        
         // Hide dropdowns if they were open
         categoryDropdown.isHidden = true
         walletDropdown.isHidden = true
     }
+    
     // MARK: - ACTIONS/EVENT LISTENERS
-    @objc private func openAttachmentBottomSheet() {
-        view.addSubview(bottomSheetView)
-        let galleryButton = createButton(title: "Choose from Gallery", action: #selector(galleryTapped))
-        let cancelButton = createButton(title: "Cancel", action: #selector(closeBottomSheet))
-        
-        let stackView = UIStackView(arrangedSubviews: [galleryButton, cancelButton])
-        stackView.axis = .vertical
-        stackView.spacing = 12
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        bottomSheetView.addSubview(stackView)
-        
-        NSLayoutConstraint.activate([
-            bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomSheetView.heightAnchor.constraint(equalToConstant: 200),
-            bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 300),
-            
-            stackView.centerXAnchor.constraint(equalTo: bottomSheetView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: bottomSheetView.centerYAnchor),
-            stackView.widthAnchor.constraint(equalTo: bottomSheetView.widthAnchor, multiplier: 0.8),
-        ])
-        view.layoutIfNeeded()
-        UIView.animate(withDuration: 0.3) {
-            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: -380)
-        }
-    }
+    
     @objc private func showCategoryDropdown() {
         categoryDropdown.isHidden.toggle()
     }
     @objc private func showWalletDropdown() {
         walletDropdown.isHidden.toggle()
     }
-    @objc private func galleryTapped() {
-        openImagePicker(sourceType: .photoLibrary)
-        closeBottomSheet()
-    }
+   
     @objc private func removeAttachment() {
         print("Removing attachment")
         attachmentImageView.image = nil
         attachmentFieldView.isHidden = false
-    }
-    @objc private func closeBottomSheet() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: 300)
-        }) { _ in
-            self.bottomSheetView.removeFromSuperview()
-        }
     }
     @objc private func continueButtonTapped() {
         // Get data from text fields
@@ -329,23 +273,6 @@ extension AddIncomeViewController: UITableViewDelegate, UITableViewDataSource {
             walletLabel.text = walletOptions[indexPath.row]
             walletDropdown.isHidden = true
         }
-    }
-}
-
-// MARK: -  IMAGEPICKER METHODS
-extension AddIncomeViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.editedImage] as? UIImage {
-            attachmentImageView.image = selectedImage
-        } else if let selectedImage = info[.originalImage] as? UIImage {
-            attachmentImageView.image = selectedImage
-        }
-        attachmentFieldView.isHidden = true
-        print("Attachment selected")
-        picker.dismiss(animated: true)
-    }
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
     }
 }
 

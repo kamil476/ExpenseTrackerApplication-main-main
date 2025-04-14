@@ -70,7 +70,6 @@ class CustomTabBarController: UITabBarController {
         
         updateTabSelection()
     }
-    
     private func setupTabButton(button: UIButton, imageName: String, x: CGFloat, tag: Int) {
         button.frame = CGRect(x: x, y: customTabBarView.frame.origin.y + 10, width: 50, height: 30)
         button.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -79,7 +78,6 @@ class CustomTabBarController: UITabBarController {
         button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
         view.addSubview(button)
     }
-    
     private func setupTabLabel(label: UILabel, text: String, x: CGFloat, tag: Int) {
         label.frame = CGRect(x: x, y: customTabBarView.frame.origin.y + 45, width: 70, height: 20)
         label.text = text
@@ -89,12 +87,10 @@ class CustomTabBarController: UITabBarController {
         label.tag = tag
         view.addSubview(label)
     }
-    
     @objc private func tabButtonTapped(_ sender: UIButton) {
         selectedIndex = sender.tag
         updateTabSelection()
     }
-    
     private func updateTabSelection() {
         homeButton.tintColor = (selectedIndex == 0) ? UIColor(hex: "7F3DFF") : .gray
         transactionButton.tintColor = (selectedIndex == 1) ? UIColor(hex: "7F3DFF") : .gray

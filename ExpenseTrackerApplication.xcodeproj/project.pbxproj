@@ -35,6 +35,7 @@
 		E8DC7B8F2D82BCAD00C9FFEF /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DC7B8E2D82BCAD00C9FFEF /* CustomTabBarController.swift */; };
 		E8E6FA4D2DA7B34400F77C62 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6FA4C2DA7B34400F77C62 /* CustomView.swift */; };
 		E8E6FA4F2DA7D29C00F77C62 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6FA4E2DA7D29C00F77C62 /* CustomButton.swift */; };
+		E8E6FA522DA92A8600F77C62 /* BaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6FA512DA92A8600F77C62 /* BaseController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		E8DC7B8E2D82BCAD00C9FFEF /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
 		E8E6FA4C2DA7B34400F77C62 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
 		E8E6FA4E2DA7D29C00F77C62 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		E8E6FA512DA92A8600F77C62 /* BaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,6 +288,7 @@
 		E8DC7B792D7AFB3A00C9FFEF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				E8E6FA502DA92A4B00F77C62 /* BaseController */,
 				E8DC7B8D2D82BC5F00C9FFEF /* TabbarController */,
 				E82F83F42D968D1000C17354 /* Dashboard */,
 				E8DC7B7E2D7EE32F00C9FFEF /* AddExpense */,
@@ -367,6 +370,14 @@
 				E82F83E62D928B6A00C17354 /* ExpenseTableViewCell */,
 			);
 			path = CustomCells;
+			sourceTree = "<group>";
+		};
+		E8E6FA502DA92A4B00F77C62 /* BaseController */ = {
+			isa = PBXGroup;
+			children = (
+				E8E6FA512DA92A8600F77C62 /* BaseController.swift */,
+			);
+			path = BaseController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,6 +511,7 @@
 			files = (
 				E8DC7B4C2D7AC67700C9FFEF /* AddExpenseViewController.swift in Sources */,
 				E82F83EB2D95247500C17354 /* DateExtension.swift in Sources */,
+				E8E6FA522DA92A8600F77C62 /* BaseController.swift in Sources */,
 				E8DC7B8C2D82B2FF00C9FFEF /* DashboardViewController.swift in Sources */,
 				E8DC7B8F2D82BCAD00C9FFEF /* CustomTabBarController.swift in Sources */,
 				E82F83E82D928C9400C17354 /* DashboardExpenseListTableView.swift in Sources */,

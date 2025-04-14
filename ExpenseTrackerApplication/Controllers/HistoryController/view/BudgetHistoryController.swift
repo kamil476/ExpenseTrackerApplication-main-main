@@ -30,7 +30,7 @@ class BudgetHistoryController: UIViewController {
         lbl.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return lbl
     }()
-    private let resetButton = CustomButton(title: "Reset", titleColor: UIColor(hex: "7F3DFF"),target: self, action: #selector(resetTapped))
+    private lazy var resetButton = CustomButton(title: "Reset", titleColor: UIColor(hex: "7F3DFF"),target: self, action: #selector(resetTapped))
     private let applyButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Apply", for: .normal)
