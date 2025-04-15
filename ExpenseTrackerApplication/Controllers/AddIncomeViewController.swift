@@ -6,7 +6,7 @@
 
 import UIKit
 
-class AddIncomeViewController: BaseController {
+class AddIncomeViewController: UIViewController {
     
     // MARK: - UI COMPONENTS
     private let fieldsView = CustomView(cornerRadius: 30, backgroundColor: .white, shadowColor: .black, shadowOpacity: 0.2, shadowOffset: CGSize(width: 0, height: -3), shadowRadius: 5)
@@ -46,7 +46,7 @@ class AddIncomeViewController: BaseController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    private let walletDropdown: UITableView = {
+    private var walletDropdown: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = true
         tableView.layer.backgroundColor = .none
@@ -56,8 +56,10 @@ class AddIncomeViewController: BaseController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    private let continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
-    private let cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
+    private lazy var continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
+    private lazy var leftArrowButton = CustomButton(imageName: "arrowLeft",target: self, action: #selector(backToDashboard))
+    private lazy var cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
+    private let bottomSheetView = CustomView(cornerRadius: 20,backgroundColor: .white,shadowColor: .black,shadowOpacity: 0.3,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
     let attachmentImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -67,7 +69,7 @@ class AddIncomeViewController: BaseController {
     private let dropDownArrow = CustomImageView(imageName: "arrowDropDown")
     private let attachmentPin = CustomImageView(imageName: "attachmentPin")
     private let dropDownArrowWallet = CustomImageView(imageName: "arrowDropDown")
-    private let categoryOptions = ["Salary"]
+    private let categoryOptions = ["Food", "Transport", "Shopping", "Entertainment", "Donations", "Bills", "Repairs", "Fuel"]
     private let walletOptions = ["EasyPaisa"]
     private let titleLabel = CustomLabel(text: "Income", textColor: .white, font: UIFont.systemFont(ofSize: 20, weight: .bold))
     private let askAmount = CustomLabel(text: "How much?", textColor: .systemGray5, font: UIFont.systemFont(ofSize: 16, weight: .semibold))
@@ -79,14 +81,14 @@ class AddIncomeViewController: BaseController {
         view.backgroundColor = UIColor(hex: "00A86B")
         setupView()
         setupDropdowns()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        //        resetFields()
+        amountSpent.delegate = self
+        
     }
     
     // MARK: - FUNCTIONS
     private func setupView(){
         view.addSubview(fieldsView)
+        view.addSubview(leftArrowButton)
         view.addSubview(titleLabel)
         view.addSubview(askAmount)
         view.addSubview(continueButton)
@@ -107,7 +109,7 @@ class AddIncomeViewController: BaseController {
         attachmentFieldView.addSubview(attachmentPin)
         fieldsView.addSubview(attachmentImageView)
         descriptionFieldView.addSubview(descriptiontextField)
-
+        
         let tapCategory = UITapGestureRecognizer(target: self, action: #selector(showCategoryDropdown))
         categoryFieldView.addGestureRecognizer(tapCategory)
         
@@ -164,6 +166,9 @@ class AddIncomeViewController: BaseController {
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             
+            leftArrowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            leftArrowButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            
             fieldsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
             fieldsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             fieldsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
@@ -209,54 +214,124 @@ class AddIncomeViewController: BaseController {
         walletDropdown.delegate = self
         walletDropdown.dataSource = self
     }
+    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = sourceType
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true)
+    }
+    private func createButton(title: String, action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(hex: "7F3DFF")
+        button.layer.cornerRadius = 8
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.addTarget(self, action: action, for: .touchUpInside)
+        return button
+    }
     private func resetFields() {
         descriptiontextField.text = ""
         amountSpent.text = "0"
-        // Reset category label
         categoryLabel.text = "Select Category"
-        categoryLabel.textColor = .darkGray
-        // Reset wallet label
         walletLabel.text = "Select Wallet"
-        walletLabel.textColor = .darkGray
-        // Reset attachment
-        attachmentLabel.text = "Add Attachment"
-        attachmentLabel.textColor = .darkGray
         attachmentImageView.image = nil
-        // Hide dropdowns if they were open
+        attachmentFieldView.isHidden = false
+        // Hide dropdowns if needed
         categoryDropdown.isHidden = true
         walletDropdown.isHidden = true
     }
-    
+
     // MARK: - ACTIONS/EVENT LISTENERS
-    
+    @objc private func openAttachmentBottomSheet() {
+        view.addSubview(bottomSheetView)
+        let galleryButton = createButton(title: "Choose from Gallery", action: #selector(galleryTapped))
+        let cancelButton = createButton(title: "Cancel", action: #selector(closeBottomSheet))
+        let stackView = UIStackView(arrangedSubviews: [ galleryButton, cancelButton])
+        
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        bottomSheetView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSheetView.heightAnchor.constraint(equalToConstant: 200),
+            bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 300),
+            
+            stackView.centerXAnchor.constraint(equalTo: bottomSheetView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: bottomSheetView.centerYAnchor),
+            stackView.widthAnchor.constraint(equalTo: bottomSheetView.widthAnchor, multiplier: 0.8),
+        ])
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3) {
+            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: -380)
+        }
+    }
+    @objc private func continueButtonTapped() {
+        // Validation checks
+           guard let amountText = amountSpent.text, !amountText.isEmpty, let amount = Double(amountText), amount > 0 else {
+               showAlert(message: "Please enter a valid amount.")
+               return
+           }
+           guard let category = categoryLabel.text, category != "Select Category" else {
+               showAlert(message: "Please select a category.")
+               return
+           }
+           guard let wallet = walletLabel.text, wallet != "Select Wallet" else {
+               showAlert(message: "Please select a wallet.")
+               return
+           }
+           guard let description = descriptiontextField.text, !description.isEmpty else {
+               showAlert(message: "Please enter a description.")
+               return
+           }
+           // Optional image data
+           let imageData = attachmentImageView.image?.jpegData(compressionQuality: 0.8)
+           // Save to Core Data
+           CoreDataManager.shared.saveIncome(
+               incomeAmount: amount,
+               incomeCategory: category,
+               incomeDate: Date(),
+               incomeDetails: description,
+               incomePlaceHolder: imageData
+           )
+           // Show success alert
+           showSuccessAlert()
+           resetFields()
+    }
+
     @objc private func showCategoryDropdown() {
         categoryDropdown.isHidden.toggle()
     }
     @objc private func showWalletDropdown() {
         walletDropdown.isHidden.toggle()
     }
-   
-    @objc private func removeAttachment() {
-        print("Removing attachment")
-        attachmentImageView.image = nil
-        attachmentFieldView.isHidden = false
+    @objc private func cameraTapped() {
+        openImagePicker(sourceType: .camera)
+        closeBottomSheet()
     }
-    @objc private func continueButtonTapped() {
-        // Get data from text fields
-        guard let incomeName = categoryLabel.text,
-              let incomeAmountText = amountSpent.text,
-              let incomeAmount = Double(incomeAmountText),
-              let incomeDescription = descriptiontextField.text else {
-            return
+    @objc private func galleryTapped() {
+        openImagePicker(sourceType: .photoLibrary)
+        closeBottomSheet()
+    }
+    @objc private func closeBottomSheet() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: 300)
+        }) { _ in
+            self.bottomSheetView.removeFromSuperview()
         }
-        // Saving expense data using CoreDataManager
-        CoreDataManager.shared.saveIncome(incomeAmount: incomeAmount, incomeCategory: incomeName, incomeDate: Date(), incomeDetails: incomeDescription)
-        showSuccessAlert()
+    }
+    @objc private func backToDashboard() {
+        self.dismiss(animated: true, completion: nil)
     }
 }
 
 // MARK: -  TABLEVIEW METHODS
 extension AddIncomeViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableView == categoryDropdown ? categoryOptions.count : walletOptions.count
     }
@@ -276,11 +351,36 @@ extension AddIncomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: -  IMAGEPICKER METHODS
+extension AddIncomeViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.editedImage] as? UIImage {
+            attachmentImageView.image = selectedImage
+        } else if let selectedImage = info[.originalImage] as? UIImage {
+            attachmentImageView.image = selectedImage
+        }
+        attachmentFieldView.isHidden = true
+        print("Attachment selected")
+        picker.dismiss(animated: true)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+}
+
 // MARK: -  TEXTFIELD DELEGATE
 extension AddIncomeViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        return true
+    }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == amountSpent {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
         return true
     }
 }

@@ -5,7 +5,7 @@
         <attribute name="expenseCategory" optional="YES" attributeType="String"/>
         <attribute name="expenseDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="expenseDetails" optional="YES" attributeType="String"/>
-        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="expensePlaceHolder" optional="YES" attributeType="Binary"/>
         <attribute name="isIncome" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
     <entity name="Income" representedClassName="Income" syncable="YES" codeGenerationType="class">
@@ -13,5 +13,6 @@
         <attribute name="incomeCategory" optional="YES" attributeType="String"/>
         <attribute name="incomeDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="incomeDetails" optional="YES" attributeType="String"/>
+        <attribute name="incomePlaceHolder" optional="YES" attributeType="Binary"/>
     </entity>
 </model>

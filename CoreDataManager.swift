@@ -5,7 +5,6 @@
 //  Created by Kamil Kakar on 19/03/2025.
 //
 
-import Foundation
 import CoreData
 
 class CoreDataManager {
@@ -25,9 +24,8 @@ class CoreDataManager {
         }
         return container
     }()
-    
     // MARK: - Save Expense
-    func saveExpense(expenseAmount: Double, expenseCategory: String, expenseDate: Date, expenseDetails: String, isIncome: Bool) {
+    func saveExpense(expenseAmount: Double, expenseCategory: String, expenseDate: Date, expenseDetails: String, isIncome: Bool, expensePlaceHolder: Data?) {
         // Creating a new object
         let expenseEntity = Expense(context: context)
         // Setting the properties of the entity
@@ -36,12 +34,12 @@ class CoreDataManager {
         expenseEntity.expenseDate = expenseDate
         expenseEntity.expenseDetails = expenseDetails
         expenseEntity.isIncome = isIncome
+        expenseEntity.expensePlaceHolder = expensePlaceHolder
         // Saving to persist the data
         saveContext()
     }
-    
     // MARK: - Save Income
-    func saveIncome(incomeAmount: Double, incomeCategory: String, incomeDate: Date, incomeDetails: String) {
+    func saveIncome(incomeAmount: Double, incomeCategory: String, incomeDate: Date, incomeDetails: String, incomePlaceHolder: Data?) {
         // Creating a new object
         let incomeEntity = Income(context: context)
         // Setting the properties of the entity
@@ -49,10 +47,10 @@ class CoreDataManager {
         incomeEntity.incomeCategory = incomeCategory
         incomeEntity.incomeDate = incomeDate
         incomeEntity.incomeDetails = incomeDetails
+        incomeEntity.incomePlaceHolder = incomePlaceHolder
         // Saving to persist the data
         saveContext()
     }
-    
     // MARK: - Fetch All Expenses
     func fetchAllExpenses() -> [Expense]? {
         let fetchRequest: NSFetchRequest<Expense> = Expense.fetchRequest()
@@ -63,7 +61,6 @@ class CoreDataManager {
             return nil
         }
     }
-
     // MARK: - Fetch All Incomes
     func fetchAllIncomes() -> [Income]? {
         let fetchRequest: NSFetchRequest<Income> = Income.fetchRequest()
@@ -74,7 +71,6 @@ class CoreDataManager {
             return nil
         }
     }
-    
     // MARK: - Save Context
     private func saveContext() {
         if context.hasChanges {
@@ -85,4 +81,16 @@ class CoreDataManager {
             }
         }
     }
+    // MARK: - Delete Specific Expense
+    func deleteExpense(_ expense: Expense) {
+        context.delete(expense)
+        saveContext()
+    }
+    
+    // MARK: - Delete Specific Income
+    func deleteIncome(_ income: Income) {
+        context.delete(income)
+        saveContext()
+    }
 }
+

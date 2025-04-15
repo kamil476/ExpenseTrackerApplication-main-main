@@ -6,7 +6,7 @@
 
 import UIKit
 
-class AddExpenseViewController: BaseController {
+class AddExpenseViewController: UIViewController {
     
     // MARK: - UI COMPONENTS
     private let fieldsView = CustomView(cornerRadius: 30, backgroundColor: .white, shadowColor: .black, shadowOpacity: 0.2, shadowOffset: CGSize(width: 0, height: -3), shadowRadius: 5)
@@ -52,17 +52,16 @@ class AddExpenseViewController: BaseController {
         tableView.layer.borderWidth = 1
         tableView.layer.borderColor = UIColor.systemGray5.cgColor
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
-    }()
-    private let continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
-    private let leftArrowButton = CustomButton(imageName: "arrowLeft",target: self, action: #selector(backToDashboard))
-    private let cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
+        return tableView }()
+    private lazy var continueButton = CustomButton(title: "Continue" ,backgroundColor: UIColor(hex: "7F3DFF"), titleColor: .white, font: UIFont.boldSystemFont(ofSize: 20), cornerRadius: 25, target: self, action: #selector(continueButtonTapped))
+    private lazy var leftArrowButton = CustomButton(imageName: "arrowLeft",target: self, action: #selector(backToDashboard))
+    private lazy var cancelButton = CustomButton(title: "Close",titleColor: .white, target: self, action:  #selector (closeBottomSheet))
+    private let bottomSheetView = CustomView(cornerRadius: 20,backgroundColor: .white,shadowColor: .black,shadowOpacity: 0.3,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
     let attachmentImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
+        return imageView }()
     private let dropDownArrow = CustomImageView(imageName: "arrowDropDown")
     private let attachmentPin = CustomImageView(imageName: "attachmentPin")
     private let dropDownArrowWallet = CustomImageView(imageName: "arrowDropDown")
@@ -78,6 +77,7 @@ class AddExpenseViewController: BaseController {
         view.backgroundColor = UIColor(hex: "FD3C4A")
         setupView()
         setupDropdowns()
+        amountSpent.delegate = self
     }
     
     // MARK: - FUNCTIONS
@@ -209,29 +209,88 @@ class AddExpenseViewController: BaseController {
         walletDropdown.delegate = self
         walletDropdown.dataSource = self
     }
-    
-    //    private func getCurrentTime() -> String {
-    //        let formatter = DateFormatter()
-    //        formatter.dateFormat = "hh:mm a"
-    //        return formatter.string(from: Date())
-    //    }
-    // MARK: - ACTIONS/EVENT LISTENERS
+    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = sourceType
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true)
+    }
+    private func createButton(title: String, action: Selector) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(hex: "7F3DFF")
+        button.layer.cornerRadius = 8
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.addTarget(self, action: action, for: .touchUpInside)
+        return button
+    }
+    private func resetFields() {
+        descriptiontextField.text = ""
+        amountSpent.text = "0"
+        categoryLabel.text = "Select Category"
+        walletLabel.text = "Select Wallet"
+        attachmentImageView.image = nil
+        attachmentFieldView.isHidden = false
+        categoryDropdown.isHidden = true
+        walletDropdown.isHidden = true
+    }
 
-    @objc private func continueButtonTapped() {
-        // Get data from text fields
-        guard let expenseName = categoryLabel.text,
-              let expenseAmountText = amountSpent.text,
-              let expenseAmount = Double(expenseAmountText),
-              let expenseDescription = descriptiontextField.text else {
-            return
+    // MARK: - ACTIONS/EVENT LISTENERS
+    @objc private func openAttachmentBottomSheet() {
+        view.addSubview(bottomSheetView)
+        let galleryButton = createButton(title: "Choose from Gallery", action: #selector(galleryTapped))
+        let cancelButton = createButton(title: "Cancel", action: #selector(closeBottomSheet))
+        let stackView = UIStackView(arrangedSubviews: [ galleryButton, cancelButton])
+        
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        bottomSheetView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            bottomSheetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSheetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSheetView.heightAnchor.constraint(equalToConstant: 200),
+            bottomSheetView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 300),
+            
+            stackView.centerXAnchor.constraint(equalTo: bottomSheetView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: bottomSheetView.centerYAnchor),
+            stackView.widthAnchor.constraint(equalTo: bottomSheetView.widthAnchor, multiplier: 0.8),
+        ])
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.3) {
+            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: -380)
         }
+    }
+    @objc private func continueButtonTapped() {
+        // Validation checks
+           guard let amountText = amountSpent.text, !amountText.isEmpty, let amount = Double(amountText), amount > 0 else {
+               showAlert(message: "Please enter a valid amount.")
+               return
+           }
+           guard let category = categoryLabel.text, category != "Select Category" else {
+               showAlert(message: "Please select a category.")
+               return
+           }
+           guard let wallet = walletLabel.text, wallet != "Select Wallet" else {
+               showAlert(message: "Please select a wallet.")
+               return
+           }
+           guard let description = descriptiontextField.text, !description.isEmpty else {
+               showAlert(message: "Please enter a description.")
+               return
+           }
+        let imageData = attachmentImageView.image?.jpegData(compressionQuality: 0.8)
         // Save expense data using CoreDataManager
-        CoreDataManager.shared.saveExpense(expenseAmount: expenseAmount,
-                                           expenseCategory: expenseName,
+        CoreDataManager.shared.saveExpense(expenseAmount: amount,
+                                           expenseCategory: category,
                                            expenseDate: Date(),
-                                           expenseDetails: expenseDescription,
-                                           isIncome: false)
+                                           expenseDetails: description, isIncome: false,
+                                            expensePlaceHolder: imageData)
         showSuccessAlert(title: "Success", message: "Expense Added Successfully")
+        resetFields()
     }
     @objc private func showCategoryDropdown() {
         categoryDropdown.isHidden.toggle()
@@ -239,9 +298,16 @@ class AddExpenseViewController: BaseController {
     @objc private func showWalletDropdown() {
         walletDropdown.isHidden.toggle()
     }
-    @objc private func cameraTapped() {
-        openImagePicker(sourceType: .camera)
+    @objc private func galleryTapped() {
+        openImagePicker(sourceType: .photoLibrary)
         closeBottomSheet()
+    }
+    @objc private func closeBottomSheet() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: 300)
+        }) { _ in
+            self.bottomSheetView.removeFromSuperview()
+        }
     }
     @objc private func backToDashboard() {
         self.dismiss(animated: true, completion: nil)
@@ -270,12 +336,36 @@ extension AddExpenseViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: -  IMAGEPICKER METHODS
+extension AddExpenseViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.editedImage] as? UIImage {
+            attachmentImageView.image = selectedImage
+        } else if let selectedImage = info[.originalImage] as? UIImage {
+            attachmentImageView.image = selectedImage
+        }
+        attachmentFieldView.isHidden = true
+        print("Attachment selected")
+        picker.dismiss(animated: true)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+}
 
 // MARK: -  TEXTFIELD DELEGATE
 extension AddExpenseViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        return true
+    }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == amountSpent {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
         return true
     }
 }

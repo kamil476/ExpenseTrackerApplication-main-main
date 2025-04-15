@@ -82,7 +82,6 @@ class BaseController: UIViewController, UIImagePickerControllerDelegate & UINavi
             stackView.centerXAnchor.constraint(equalTo: bottomSheetView.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: bottomSheetView.centerYAnchor),
         ])
-        
         // Animate bottom sheet up
         UIView.animate(withDuration: 0.3) {
             self.bottomSheetView.transform = CGAffineTransform(translationX: 0, y: -300)
@@ -101,4 +100,3 @@ class BaseController: UIViewController, UIImagePickerControllerDelegate & UINavi
         closeBottomSheet()
     }
 }
-

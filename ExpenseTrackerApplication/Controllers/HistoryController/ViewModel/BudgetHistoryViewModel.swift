@@ -13,6 +13,7 @@ class BudgetHistoryViewModel {
     var selectedFilter: String?
     var selectedSort: String?
     private let dateFormatter: DateFormatter
+
     
     init() {
         dateFormatter = DateFormatter()
@@ -102,6 +103,21 @@ class BudgetHistoryViewModel {
             return income.incomeAmount
         }
         return 0.0
+    }
+    func removeEntry(at indexPath: IndexPath) {
+        let entry = dataByDate[indexPath.section].entries[indexPath.row]
+        // Delete from CoreData
+        if entry.type == "expense", let expense = entry.data as? Expense {
+            CoreDataManager.shared.deleteExpense(expense)
+        } else if entry.type == "income", let income = entry.data as? Income {
+            CoreDataManager.shared.deleteIncome(income)
+        }
+        // Remove from local data array
+        dataByDate[indexPath.section].entries.remove(at: indexPath.row)
+        // If section is empty after deletion, remove the section
+        if dataByDate[indexPath.section].entries.isEmpty {
+            dataByDate.remove(at: indexPath.section)
+        }
     }
 }
 

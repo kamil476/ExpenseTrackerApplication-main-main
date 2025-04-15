@@ -16,7 +16,7 @@ class DashboardIncomeListTableview: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private let iconImageView = CustomImageView(imageName: "")
+    private let iconImageView = CustomImageView(imageName: "", cornerRadius: 15)
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
@@ -79,8 +79,8 @@ class DashboardIncomeListTableview: UITableViewCell {
             
             iconImageView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
             iconImageView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 30),
-            iconImageView.heightAnchor.constraint(equalToConstant: 30),
+            iconImageView.widthAnchor.constraint(equalToConstant: 40),
+            iconImageView.heightAnchor.constraint(equalToConstant: 40),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: iconContainer.trailingAnchor, constant: 12),
@@ -104,7 +104,12 @@ class DashboardIncomeListTableview: UITableViewCell {
         titleLabel.text = income.incomeCategory
         descriptionLabel.text = income.incomeDetails
         amountLabel.text = "+ Rs\(income.incomeAmount)"
-        
+        if let imageData = income.incomePlaceHolder {
+            iconImageView.image = UIImage(data: imageData)
+        } else {
+            iconImageView.image = UIImage(named: "shoppingBag") 
+        }
+    
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a" // 12-hour format with AM/PM
         timeLabel.text = dateFormatter.string(from: income.incomeDate!)

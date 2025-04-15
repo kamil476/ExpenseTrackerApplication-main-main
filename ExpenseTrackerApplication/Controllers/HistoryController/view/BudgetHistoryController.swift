@@ -12,8 +12,8 @@ class BudgetHistoryController: UIViewController {
     private let viewModel = BudgetHistoryViewModel()
     private let tableView = UITableView(frame: .zero, style: .grouped)
     private let bottomSheetContainer = UIView()
-    private let filterButton = CustomButton(imageName: "filterIcon",target: self, action: #selector(openFilterBottomSheet))
-    private let refreshButton = CustomButton(imageName: "refreshIcon",target: self, action: #selector(refreshButtonAction))
+    private lazy var filterButton = CustomButton(imageName: "filterIcon",target: self, action: #selector(openFilterBottomSheet))
+    private lazy var refreshButton = CustomButton(imageName: "refreshIcon",target: self, action: #selector(refreshButtonAction))
     private let filterOptions = ["Income", "Expense"]
     private let sortOptions = ["Highest", "Lowest", "Newest", "Oldest"]
     private var selectedFilterButton: UIButton?
@@ -31,7 +31,7 @@ class BudgetHistoryController: UIViewController {
         return lbl
     }()
     private lazy var resetButton = CustomButton(title: "Reset", titleColor: UIColor(hex: "7F3DFF"),target: self, action: #selector(resetTapped))
-    private let applyButton: UIButton = {
+    private lazy var applyButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Apply", for: .normal)
         btn.backgroundColor = UIColor(hex: "7F3DFF")
@@ -45,8 +45,7 @@ class BudgetHistoryController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setupTableView()
-        setupFilter()
+        setupFilterAndTableView()
         bindViewModel()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -66,37 +65,41 @@ class BudgetHistoryController: UIViewController {
             self.tableView.reloadData()
         }
     }
-    private func setupFilter() {
+    private func setupFilterAndTableView() {
+        // Add buttons first
         view.addSubview(filterButton)
         view.addSubview(refreshButton)
+        view.addSubview(tableView)
         
+        filterButton.translatesAutoresizingMaskIntoConstraints = false
+        refreshButton.translatesAutoresizingMaskIntoConstraints = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
+            // Filter Button
             filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            filterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            filterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 55),
             filterButton.heightAnchor.constraint(equalToConstant: 40),
             filterButton.widthAnchor.constraint(equalToConstant: 40),
             
+            // Refresh Button
             refreshButton.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor, constant: -10),
-            refreshButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 67),
+            refreshButton.centerYAnchor.constraint(equalTo: filterButton.centerYAnchor),
             refreshButton.heightAnchor.constraint(equalToConstant: 26),
             refreshButton.widthAnchor.constraint(equalToConstant: 26),
+            
+            // TableView (positioned below the filterButton)
+            tableView.topAnchor.constraint(equalTo: filterButton.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -55)
         ])
-    }
-    private func setupTableView() {
+
         tableView.register(DashboardExpenseListTableView.self, forCellReuseIdentifier: "DashboardExpenseListTableView")
         tableView.register(DashboardIncomeListTableview.self, forCellReuseIdentifier: "DashboardIncomeListTableview")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -55),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
     }
     private func setupBottomSheet() {
         // Bottom sheet container
@@ -236,7 +239,6 @@ extension BudgetHistoryController: UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let entry = viewModel.dataByDate[indexPath.section].entries[indexPath.row]
-        
         if entry.type == "expense", let expense = entry.data as? Expense {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DashboardExpenseListTableView", for: indexPath) as! DashboardExpenseListTableView
             cell.configureExpense(with: expense)
@@ -247,5 +249,30 @@ extension BudgetHistoryController: UITableViewDataSource, UITableViewDelegate {
             return cell
         }
         return UITableViewCell()
+    }
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let header = view as? UITableViewHeaderFooterView {
+            header.contentView.backgroundColor = .white
+            header.textLabel?.textColor = .black
+            header.textLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        }
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            tableView.beginUpdates()
+            // Remove from data model
+            viewModel.removeEntry(at: indexPath)
+            // Handle section deletion if needed
+            if viewModel.dataByDate.count > indexPath.section {
+                if viewModel.dataByDate[indexPath.section].entries.isEmpty {
+                    tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+                } else {
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                }
+            } else {
+                tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+            }
+            tableView.endUpdates()
+        }
     }
 }

@@ -16,7 +16,7 @@ class DashboardExpenseListTableView: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private let iconImageView = CustomImageView(imageName: "")
+    private let iconImageView = CustomImageView(imageName: "", cornerRadius: 12)
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
@@ -86,8 +86,8 @@ class DashboardExpenseListTableView: UITableViewCell {
             
             iconImageView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
             iconImageView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 30),
-            iconImageView.heightAnchor.constraint(equalToConstant: 30),
+            iconImageView.widthAnchor.constraint(equalToConstant: 40),
+            iconImageView.heightAnchor.constraint(equalToConstant: 40),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: iconContainer.trailingAnchor, constant: 12),
@@ -114,7 +114,11 @@ class DashboardExpenseListTableView: UITableViewCell {
         titleLabel.text = expense.expenseCategory
         descriptionLabel.text = expense.expenseDetails
         expenseAmountLabel.text = "- Rs\(expense.expenseAmount)"
-        
+        if let imageData = expense.expensePlaceHolder {
+            iconImageView.image = UIImage(data: imageData)
+        } else {
+            iconImageView.image = UIImage(named: "shoppingBag") 
+        }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a"
         timeLabel.text = dateFormatter.string(from: expense.expenseDate!)
