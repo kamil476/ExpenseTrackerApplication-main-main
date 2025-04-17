@@ -9,7 +9,7 @@ import UIKit
 class DashboardViewController: UIViewController {
     
     // MARK: - Properties
-    var viewModel = DashboardViewModel()
+    private let viewModel = DashboardViewModel()
     
     // MARK: - UI Components
     private let incomeView = CustomView(cornerRadius: 30,backgroundColor: UIColor(hex: "00A86B"),shadowColor: .black,shadowOpacity: 0.2,shadowOffset:CGSize(width: 0, height: -3),shadowRadius: 5)
@@ -201,7 +201,7 @@ extension DashboardViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel.expenses.count + viewModel.incomes.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Check whether the current index is for an expense or an income
+        // Checking the current index is for an expense or an income
         if indexPath.row < viewModel.expenses.count {
             // Configure expense cell
             let expenseCell = tableView.dequeueReusableCell(withIdentifier: "DashboardExpenseListTableView", for: indexPath) as! DashboardExpenseListTableView

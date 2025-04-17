@@ -34,7 +34,7 @@ class DashboardViewModel {
             return result + expense.expenseAmount
         }
     }
-    
+
     // MARK: - Load All Data and Filter by Option
     func loadDataFiltered(for option: String) {
         let allExpenses = CoreDataManager.shared.fetchAllExpenses() ?? []

@@ -16,8 +16,6 @@ class BudgetHistoryController: UIViewController {
     private lazy var refreshButton = CustomButton(imageName: "refreshIcon",target: self, action: #selector(refreshButtonAction))
     private let filterOptions = ["Income", "Expense"]
     private let sortOptions = ["Highest", "Lowest", "Newest", "Oldest"]
-    private var selectedFilterButton: UIButton?
-    private var selectedSortButton: UIButton?
     private let filterStack = UIStackView()
     private let sortStack = UIStackView()
     private let titleLabel: UILabel = {
@@ -71,6 +69,7 @@ class BudgetHistoryController: UIViewController {
         view.addSubview(refreshButton)
         view.addSubview(tableView)
         
+        // in ui component!!
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -94,7 +93,8 @@ class BudgetHistoryController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -55)
         ])
-
+        
+        // in ui compoenent !!
         tableView.register(DashboardExpenseListTableView.self, forCellReuseIdentifier: "DashboardExpenseListTableView")
         tableView.register(DashboardIncomeListTableview.self, forCellReuseIdentifier: "DashboardIncomeListTableview")
         tableView.dataSource = self

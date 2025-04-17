@@ -22,7 +22,6 @@ class CustomButton: UIButton {
         if let target = target, let action = action {self.addTarget(target, action: action, for: .touchUpInside)}
         self.translatesAutoresizingMaskIntoConstraints = false
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -8,7 +8,7 @@
 import UIKit
 
 class DashboardIncomeListTableview: UITableViewCell {
-
+    
     private let iconContainer: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.systemYellow.withAlphaComponent(0.2)
@@ -107,9 +107,9 @@ class DashboardIncomeListTableview: UITableViewCell {
         if let imageData = income.incomePlaceHolder {
             iconImageView.image = UIImage(data: imageData)
         } else {
-            iconImageView.image = UIImage(named: "shoppingBag") 
+            iconImageView.image = UIImage(named: "shoppingBag")
         }
-    
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a" // 12-hour format with AM/PM
         timeLabel.text = dateFormatter.string(from: income.incomeDate!)

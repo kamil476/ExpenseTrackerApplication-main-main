@@ -3,18 +3,15 @@
 //  ExpenseTrackerApplication
 //
 //  Created by Kamil Kakar on 19/03/2025.
-//
 
 import CoreData
 
 class CoreDataManager {
     // Singleton instance
     static let shared = CoreDataManager()
-    // Managed Object Context
     private var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-    // Persistent Container
     private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DataModel")
         container.loadPersistentStores { description, error in
@@ -24,6 +21,7 @@ class CoreDataManager {
         }
         return container
     }()
+    
     // MARK: - Save Expense
     func saveExpense(expenseAmount: Double, expenseCategory: String, expenseDate: Date, expenseDetails: String, isIncome: Bool, expensePlaceHolder: Data?) {
         // Creating a new object
@@ -35,9 +33,10 @@ class CoreDataManager {
         expenseEntity.expenseDetails = expenseDetails
         expenseEntity.isIncome = isIncome
         expenseEntity.expensePlaceHolder = expensePlaceHolder
-        // Saving to persist the data
+        // Saving the data
         saveContext()
     }
+    
     // MARK: - Save Income
     func saveIncome(incomeAmount: Double, incomeCategory: String, incomeDate: Date, incomeDetails: String, incomePlaceHolder: Data?) {
         // Creating a new object
@@ -48,9 +47,10 @@ class CoreDataManager {
         incomeEntity.incomeDate = incomeDate
         incomeEntity.incomeDetails = incomeDetails
         incomeEntity.incomePlaceHolder = incomePlaceHolder
-        // Saving to persist the data
+        // Saving the data
         saveContext()
     }
+    
     // MARK: - Fetch All Expenses
     func fetchAllExpenses() -> [Expense]? {
         let fetchRequest: NSFetchRequest<Expense> = Expense.fetchRequest()
@@ -61,6 +61,7 @@ class CoreDataManager {
             return nil
         }
     }
+    
     // MARK: - Fetch All Incomes
     func fetchAllIncomes() -> [Income]? {
         let fetchRequest: NSFetchRequest<Income> = Income.fetchRequest()
@@ -71,6 +72,7 @@ class CoreDataManager {
             return nil
         }
     }
+    
     // MARK: - Save Context
     private func saveContext() {
         if context.hasChanges {
@@ -81,16 +83,16 @@ class CoreDataManager {
             }
         }
     }
+    
     // MARK: - Delete Specific Expense
     func deleteExpense(_ expense: Expense) {
         context.delete(expense)
         saveContext()
     }
     
-    // MARK: - Delete Specific Income
+    // MARK: - Delete Income
     func deleteIncome(_ income: Income) {
         context.delete(income)
         saveContext()
     }
 }
-
